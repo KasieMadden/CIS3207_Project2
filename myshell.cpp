@@ -13,7 +13,7 @@ using namespace std;
 extern char **environ;
 
 
-void directory(char *dirname)
+void directory(char *dirname);
 string prompt = "";
 
 int main(int argc, char *argv[],char *envp[]) {
@@ -92,19 +92,18 @@ void environment(char *envp[]){
 
 }//end of environ
 
-//This function will show what is typed after the command  followed by a new line.
-//so while the args are not null will print string
-void echo(char *string){
-
-
-}//end of echo
-
+//This function will show what is typed after the command  followed by a nm
 
 //help() runs though ifs  and prints what a command does
 //https://www.w3schools.com/cpp/cpp_files.asp
 void help(char* cmd){
+    string helpText;
 
-    ifstream readFile("readme_doc.txt");
+    std::ifstream readFile("readme_doc.txt");
+    while(getline(readFile, helpText)){
+        cout<<helpText;
+
+    }//end of while
 
 
 }//end of help
@@ -114,6 +113,10 @@ void help(char* cmd){
 
 //will pause shell until user hits enter
 void Pause(){
+    cout << "Press Enter to Continue Program. ";
+    while(cin.get() != NULL){
+        return ;
+    }
 
 
 }//end of pause
