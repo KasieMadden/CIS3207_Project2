@@ -6,40 +6,74 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <libgen.h>
+#include <vector>
+#include <regex>
 #include <string>
 
 using namespace std;
 
 extern char **environ;
 
+
 void directory(string dirname);
 void changeDir(char *dir);
 void clear();
 void environment(char *envp[]);
 void echo(char* str);
-void help(char* cmd);
+void help(char* command);
 void Pause();
 int quit();
 
+vector<string> parse(string in){
+    string temp;
+    vector<string> out;
+}
 
-string prompt = " myshell>";
-string command = "";
-string command_line;
 
 
 int main(int argc, char *argv[],char *envp[]) {
+    char temp[1000];
+    string user;
+    vector<string> command;
+    string in;
 
-    directory(".");
-    environment(envp);
+//string prompt = " myshell>";
+//string command = "";
+//string command_line;
 
-    echo("\n echo echo echo echo....");
+    //directory(".");
+/**
+    char *i[] ="hello how are you";
+    char *parsedArgs[MAXLIST];
 
 
-    while(true){ }//end of while
+    parse(i, parsed );
+    cout << parsed;
+**/
+    while(true){
+
+        cout << "myshell:~";
+        user = (string)getcwd(temp, 1000);
+        user =user + ">";
+        cout<< user;
+
+        getline(cin, in);
+
+
+
+    }
 
 
 }// end of main()*******************************************************
 
+
+
+/**
+//To parsed the string
+void parse(){
+
+}//end of parse
+*/
 
 //***********INTERNAL COMMANDS
 
@@ -111,13 +145,13 @@ void environment(char *envp[]){
 
 //This function will show what is typed after the command  followed by a nm
 void echo(char str){
-    printf("%s",str);
+    // printf("%s",str);
 }//end of echo
 
 
 //help() runs though ifs  and prints what a command does
 //https://www.w3schools.com/cpp/cpp_files.asp
-void help(char* cmd){
+void help(char* command){
     string helpText;
 
     ifstream readFile("readme_doc.txt");
@@ -146,5 +180,4 @@ int quit(){
     cout << "Exiting myshell" << endl;
     exit(0);
 }//end of quit
-
 
