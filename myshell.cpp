@@ -9,73 +9,99 @@
 #include <vector>
 #include <regex>
 #include <string>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-extern char **environ;
+//extern char **environ;
 
 
 void directory(string dirname);
 void changeDir(char *dir);
 void clear();
 void environment(char *envp[]);
-void echo(char* str);
-void help(char* command);
+void echo(string);
+void help();
 void Pause();
-int quit();
+void quit();
+vector<string> parse(string in);
+bool internalCMD(struct command *cmd);
 
-vector<string> parse(string in){
-    string temp;
-    vector<string> out;
+
+
+
+//**************************************************************************MAIN()
+
+int main(int argc, char *argv[],char *envp[]) {
+    char temp[100];
+    string user;
+    vector<string> command;
+    string input;
+
+    while(true){
+        cout << "myshell:~";
+        user = (string)getcwd(temp, 1000);
+        user = user + ">";
+
+        getline(cin, input);
+        command = parse(input);
+    }
+
+
+
+
+    // directory(".");
+    //changeDir("..");
+    // Pause();
+    //clear();
+    // environment(envp);
+    // echo("hi hello how are you ");
+    //help();
+    // quit();
+
+
+
+
+
+
+}// end of myshell()*******************************************************
+
+vector<string> parse(string ss){
+    vector <string> token;
+    stringstream check1(ss);
+    string inter;
+
+    while(getline(check1, inter, ' ')){
+        token.push_back(inter);
+    }
+
+    for (int i = 0; i < token.size(); i++){
+        cout << token[i-1] << '\n';
+    }
+
+    return token;
+}//end of parse
+
+/**
+void pipe(){
+
+}
+
+
+void redirection(){
+
+
 }
 
 
 
-int main(int argc, char *argv[],char *envp[]) {
-    char temp[1000];
-    string user;
-    vector<string> command;
-    string in;
+void external(){
 
-//string prompt = " myshell>";
-//string command = "";
-//string command_line;
+}
 
-    //directory(".");
-/**
-    char *i[] ="hello how are you";
-    char *parsedArgs[MAXLIST];
-
-
-    parse(i, parsed );
-    cout << parsed;
 **/
-    while(true){
-
-        cout << "myshell:~";
-        user = (string)getcwd(temp, 1000);
-        user =user + ">";
-        cout<< user;
-
-        getline(cin, in);
-
-
-
-    }
-
-
-}// end of main()*******************************************************
-
-
-
-/**
-//To parsed the string
-void parse(){
-
-}//end of parse
-*/
-
 //***********INTERNAL COMMANDS
+
 
 //This functio will change  directories
 // only takes in one arg, any thing else will be error
@@ -84,14 +110,14 @@ void parse(){
 //it will get the prompted directory and then print.
 //https://pubs.opengroup.org/onlinepubs/009695399/functions/opendir.html
 void changeDir(char *dir){
-
+    char i[100];
     if(dir == NULL){
-        cerr<< "Enter directory."<< std::endl;
+        printf("%s\n", getcwd(i, 100) );
     }
-    else if(chdir(dir) == 0){
+    else if(chdir(dir) < 0){
+        cerr<< "Directory not found."<< endl;
     }
-    std::cerr<< "Directory not found."<< std::endl;
-
+    //printf("%s\n", getcwd(i, 100) );
 
 }
 
@@ -126,10 +152,11 @@ void directory(string dirname){
 //https://www.geeksforgeeks.org/clear-console-c-language
 void clear(){
     int i;
-    for(i = 0;i < 1000; i++) {
-        system("clr");
-    }
+    for(i = 0;i < 200; i++) {
+        cout << "\n";
 
+    }
+    cout<<"Screen has been cleared"<< '\n';
 }//end of clr
 
 
@@ -137,47 +164,87 @@ void clear(){
 void environment(char *envp[]){
     int i;
 
-    for (i=0; envp[i]!= NULL; i++){
+    for(i=0; envp[i]!= NULL; i++){
         cout << envp[i] << endl;
     }
 
 }//end of environ
 
-//This function will show what is typed after the command  followed by a nm
-void echo(char str){
-    // printf("%s",str);
-}//end of echo
+void echo(string string){
 
-
+    cout<< string<< '\n';
+}
 //help() runs though ifs  and prints what a command does
 //https://www.w3schools.com/cpp/cpp_files.asp
-void help(char* command){
+void help(){
     string helpText;
-
     ifstream readFile("readme_doc.txt");
 
     while(getline(readFile, helpText)){
-        cout<<helpText;
+        cout<<helpText<<'\n';
 
     }//end of while
+    readFile.close();
 
 }//end of help
 
 
 //will pause shell until user hits enter
 void Pause(){
-    cout << "Press Enter to Continue Program. ";
-    while(cin.get() != 0){
-        return ;
-    }//end while
+    cout << "\nPress Enter to Continue Program. ";
+    cin.get();
+
 
 
 }//end of pause
 
 
 //will exit shell
-int quit(){
-    cout << "Exiting myshell" << endl;
+void quit(){
+    cout << "\nExiting myshell" << endl;
     exit(0);
 }//end of quit
 
+/**
+// checks commands to see if they match the interal ones
+//if true returns that matching function
+bool internalCMD(char *cmd){
+    const char *intcmd[] = { "cd", "dir", "clr", "envoron", "echo", "help", "pause", "quit"};
+
+    if(strcmp(cmd->name, "cd") == 0){
+        changeDir();
+        return true;
+    }
+    else if(strcmp(cmd->name, "directory") == 0){
+        directory();
+        return true;
+    }
+    else if(strcmp(cmd->name, "clr") == 0){
+        clear();
+        return true;
+    }
+    else if(strcmp(cmd->name, "envoron") == 0){
+        environment();
+        return true;
+    }
+    else if(strcmp(cmd->name, "echo") == 0){
+        echo(cmd->args);
+        return true;
+    }
+    else if(strcmp(cmd->name, "help") == 0){
+        help();
+        return true;
+    }
+    else if(strcmp(cmd->name, "pause") == 0){
+        pause();
+        return true;
+    }
+    else if(strcmp(cmd->name, "quit") == 0){
+        quit();
+        return true;
+    }
+    else{
+        return false;
+    }
+}//end of  internalCo
+**/
