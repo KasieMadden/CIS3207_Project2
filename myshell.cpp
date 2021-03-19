@@ -13,11 +13,11 @@
 
 using namespace std;
 
-//extern char **environ;
+
 
 
 void directory(string dirname);
-void changeDir(char *dir);
+void changeDir(const char *dir);
 void clear();
 void environment(char *envp[]);
 void echo(string);
@@ -25,10 +25,6 @@ void help();
 void Pause();
 void quit();
 vector<string> parse(string in);
-bool internalCMD(struct command *cmd);
-
-
-
 
 //**************************************************************************MAIN()
 
@@ -42,10 +38,48 @@ int main(int argc, char *argv[],char *envp[]) {
         cout << "myshell:~";
         user = (string)getcwd(temp, 1000);
         user = user + ">";
+        cout<<user;
 
         getline(cin, input);
         command = parse(input);
-    }
+
+
+        if(command[0].compare("cd")==0){
+            changeDir(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("dir") ==0){
+            directory(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("clr") ==0){
+            clear(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("environ") ==0){
+            environment(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("echo") ==0){
+            echo(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("help") ==0){
+            help(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("pause") ==0){
+            Pause(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("quit") ==0){
+            quit(command[1].c_str());
+            command.clear();
+        }
+
+
+
+    }//end of while()
 
 
 
@@ -75,14 +109,14 @@ vector<string> parse(string ss){
         token.push_back(inter);
     }
 
-    for (int i = 0; i < token.size(); i++){
-        cout << token[i-1] << '\n';
-    }
+    // for (int i = 0; i < token.size(); i++){
+    // cout << token[i-1] << '\n';
+    //command}
 
     return token;
 }//end of parse
 
-/**
+
 void pipe(){
 
 }
@@ -94,14 +128,15 @@ void redirection(){
 }
 
 
-
 void external(){
 
 }
 
-**/
-//***********INTERNAL COMMANDS
 
+//***********INTERNAL COMMANDS
+void path(){
+
+}
 
 //This functio will change  directories
 // only takes in one arg, any thing else will be error
@@ -109,7 +144,7 @@ void external(){
 // used to change the current directory. When arg == 1
 //it will get the prompted directory and then print.
 //https://pubs.opengroup.org/onlinepubs/009695399/functions/opendir.html
-void changeDir(char *dir){
+void changeDir(const char *dir){
     char i[100];
     if(dir == NULL){
         printf("%s\n", getcwd(i, 100) );
@@ -204,47 +239,3 @@ void quit(){
     cout << "\nExiting myshell" << endl;
     exit(0);
 }//end of quit
-
-/**
-// checks commands to see if they match the interal ones
-//if true returns that matching function
-bool internalCMD(char *cmd){
-    const char *intcmd[] = { "cd", "dir", "clr", "envoron", "echo", "help", "pause", "quit"};
-
-    if(strcmp(cmd->name, "cd") == 0){
-        changeDir();
-        return true;
-    }
-    else if(strcmp(cmd->name, "directory") == 0){
-        directory();
-        return true;
-    }
-    else if(strcmp(cmd->name, "clr") == 0){
-        clear();
-        return true;
-    }
-    else if(strcmp(cmd->name, "envoron") == 0){
-        environment();
-        return true;
-    }
-    else if(strcmp(cmd->name, "echo") == 0){
-        echo(cmd->args);
-        return true;
-    }
-    else if(strcmp(cmd->name, "help") == 0){
-        help();
-        return true;
-    }
-    else if(strcmp(cmd->name, "pause") == 0){
-        pause();
-        return true;
-    }
-    else if(strcmp(cmd->name, "quit") == 0){
-        quit();
-        return true;
-    }
-    else{
-        return false;
-    }
-}//end of  internalCo
-**/
