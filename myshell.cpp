@@ -13,9 +13,6 @@
 
 using namespace std;
 
-
-
-
 void directory(string dirname);
 void changeDir(const char *dir);
 void clear();
@@ -29,78 +26,80 @@ vector<string> parse(string in);
 //**************************************************************************MAIN()
 
 int main(int argc, char *argv[],char *envp[]) {
-    char temp[100];
+   char temp[100];
     string user;
     vector<string> command;
     string input;
 
     while(true){
+        //name of shell + cwd
         cout << "myshell:~";
         user = (string)getcwd(temp, 1000);
         user = user + ">";
         cout<<user;
-
+        // user input
         getline(cin, input);
         command = parse(input);
 
-
-        if(command[0].compare("cd")==0){
-            changeDir(command[1].c_str());
-            command.clear();
-        }
-        else if(command[0].compare("dir") ==0){
-            directory(command[1].c_str());
-            command.clear();
-        }
+        //call
+       if(command[0].compare("cd")==0){
+           changeDir(command[1].c_str());
+           command.clear();
+       }
+       else if(command[0].compare("dir") ==0){
+           directory(command[1].c_str());
+           command.clear();
+       }
         else if(command[0].compare("clr") ==0){
-            clear(command[1].c_str());
+            clear();
             command.clear();
-        }
+       }
         else if(command[0].compare("environ") ==0){
-            environment(command[1].c_str());
+            environment(envp);
             command.clear();
-        }
+       }
         else if(command[0].compare("echo") ==0){
-            echo(command[1].c_str());
+            string t;
+            for(int i = 1; i < command.size(); i++){
+                t = t + command[i] + " " ;
+            }
+            echo(t);
             command.clear();
-        }
+       }
         else if(command[0].compare("help") ==0){
-            help(command[1].c_str());
+            help();
             command.clear();
-        }
+       }
         else if(command[0].compare("pause") ==0){
-            Pause(command[1].c_str());
+            Pause();
             command.clear();
-        }
+       }
         else if(command[0].compare("quit") ==0){
-            quit(command[1].c_str());
+            quit();
             command.clear();
-        }
-
-
+       }
 
     }//end of while()
 
 
 
 
-    // directory(".");
-    //changeDir("..");
-    // Pause();
+   // directory(".");
+   //changeDir("..");
+   // Pause();
     //clear();
-    // environment(envp);
-    // echo("hi hello how are you ");
+   // environment(envp);
+   // echo("hi hello how are you ");
     //help();
-    // quit();
-
-
-
+   // quit();
 
 
 
 }// end of myshell()*******************************************************
 
-vector<string> parse(string ss){
+//parser to pass the string though
+//https://www.geeksforgeeks.org/tokenizing-a-string-cpp/
+vector<string>parse(string ss){
     vector <string> token;
     stringstream check1(ss);
     string inter;
@@ -109,8 +108,8 @@ vector<string> parse(string ss){
         token.push_back(inter);
     }
 
-    // for (int i = 0; i < token.size(); i++){
-    // cout << token[i-1] << '\n';
+   // for (int i = 0; i < token.size(); i++){
+   // cout << token[i-1] << '\n';
     //command}
 
     return token;
@@ -121,8 +120,18 @@ void pipe(){
 
 }
 
+//link to code valut that  helps understand refirection
+//https://youtu.be/5fnVr-zH-SE
+void redirection(string input){
+/**    pid =fork(input);
 
-void redirection(){
+
+
+
+    if(){
+
+    }
+**/
 
 
 }
@@ -147,10 +156,10 @@ void path(){
 void changeDir(const char *dir){
     char i[100];
     if(dir == NULL){
-        printf("%s\n", getcwd(i, 100) );
+      printf("%s\n", getcwd(i, 100) );
     }
     else if(chdir(dir) < 0){
-        cerr<< "Directory not found."<< endl;
+    cerr<< "Directory not found."<< endl;
     }
     //printf("%s\n", getcwd(i, 100) );
 
@@ -181,7 +190,6 @@ void directory(string dirname){
 
 }//end of dir
 
-
 //This function is used to clear the screen
 //Using regex to clear the screen
 //https://www.geeksforgeeks.org/clear-console-c-language
@@ -191,7 +199,7 @@ void clear(){
         cout << "\n";
 
     }
-    cout<<"Screen has been cleared"<< '\n';
+cout<<"Screen has been cleared"<< '\n';
 }//end of clr
 
 
@@ -207,7 +215,7 @@ void environment(char *envp[]){
 
 void echo(string string){
 
-    cout<< string<< '\n';
+    cout<< string<< endl;
 }
 //help() runs though ifs  and prints what a command does
 //https://www.w3schools.com/cpp/cpp_files.asp
@@ -216,7 +224,7 @@ void help(){
     ifstream readFile("readme_doc.txt");
 
     while(getline(readFile, helpText)){
-        cout<<helpText<<'\n';
+        cout<<helpText<<endl;
 
     }//end of while
     readFile.close();
