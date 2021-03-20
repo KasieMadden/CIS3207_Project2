@@ -18,7 +18,7 @@ using namespace std;
 //*********************************************************PROTOTYPES
 void directory(string dirname);
 void changeDir(const char *dir);
-void clear();
+void clear1();
 void environment(char *envp[]);
 void echo(string);
 void help();
@@ -27,10 +27,11 @@ void quit();
 vector<string> parse(string in);
 void redirection(char *flag, string fileName);
 vector<char *> convertS( vector<string> s);
+void runexe(vector<string> ch);
 //*************************************************************MAIN()
 
 int main(int argc, char *argv[],char *envp[]) {
-   char temp[100];
+    char temp[100];
     string user;
     vector<string> command;
     string input;
@@ -50,29 +51,26 @@ int main(int argc, char *argv[],char *envp[]) {
             input = " ";
         }
         command = parse(input);
-        vector<char *> car = convertS(command);
-         char **command3 = &car[0];
 
-         int status = execvp(command3[0], command3);
 
-/**
+
         //call
-       if(command[0].compare("cd")==0){
-           changeDir(command[1].c_str());
-           command.clear();
-       }
-       else if(command[0].compare("dir") ==0){
-           directory(command[1].c_str());
-           command.clear();
-       }
-        else if(command[0].compare("clr") ==0){
-            clear();
+        if(command[0].compare("cd")==0){
+            changeDir(command[1].c_str());
             command.clear();
-       }
+        }
+        else if(command[0].compare("dir") ==0){
+            directory(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("clr") ==0){
+            clear1();
+            command.clear();
+        }
         else if(command[0].compare("environ") ==0){
             environment(envp);
             command.clear();
-       }
+        }
         else if(command[0].compare("echo") ==0){
             string t;
             for(unsigned int i = 1; i < command.size(); i++){
@@ -80,37 +78,38 @@ int main(int argc, char *argv[],char *envp[]) {
             }
             echo(t);
             command.clear();
-       }
+        }
         else if(command[0].compare("help") ==0){
             help();
             command.clear();
-       }
+        }
         else if(command[0].compare("pause") ==0){
             Pause();
             command.clear();
-       }
+        }
         else if(command[0].compare("quit") ==0){
             quit();
             command.clear();
-       }
+        }
+        else{
+            runexe(command);
+            command.clear();
+        }
 
-       dup2(out1, 1);
-       dup2(in1, 0);
-    **/
+        dup2(out1, 1);
+        dup2(in1, 0);
 
     }//end of while()
 
 
-
-
-   // directory(".");
-   //changeDir("..");
-   // Pause();
+    // directory(".");
+    //changeDir("..");
+    // Pause();
     //clear();
-   // environment(envp);
-   // echo("hi hello how are you ");
+    // environment(envp);
+    // echo("hi hello how are you ");
     //help();
-   // quit();
+    // quit();
 
 
 
@@ -130,25 +129,25 @@ vector<string>parse(string ss){
 
 
     while(getline(check1, inter, ' ')){
-     if(inter.compare("<") == 0||inter.compare(">")==0 || inter.compare(">>")==0){
+        if(inter.compare("<") == 0||inter.compare(">")==0 || inter.compare(">>")==0){
 
-        strcpy(a, inter.c_str());
-       // printf("%s a", a);
+            strcpy(a, inter.c_str());
+            // printf("%s a", a);
 
-        getline(check1, file, ' ');
-       // printf("%s file", file);
+            getline(check1, file, ' ');
+            // printf("%s file", file);
 
-        redirection(a, file);
-     }
-   /**  else if( inter.compare("&")==0){
-        // call & handler
-     }
-     else if( inter.compare("|")==0){
-        // call  for piping
-     }**/
-     else{
-         token.push_back(inter);
-     }
+            redirection(a, file);
+        }
+            /**  else if( inter.compare("&")==0){
+                 // call & handler
+              }
+              else if( inter.compare("|")==0){
+                 // call  for piping
+              }**/
+        else{
+            token.push_back(inter);
+        }
 
     }
     return token;
@@ -159,24 +158,37 @@ vector<string>parse(string ss){
 //https://stackoverflow.com/questions/42493101/how-to-convert-a-vectorstring-to-a-vectorchar#comment72126556_42493563
 //conver vector<string> to vector<char*
 vector<char *> convertS( vector<string> s){
- vector<char *> temp(s.size(), nullptr);
+    vector<char *> temp(s.size(), nullptr);
 
- for(int i = 0; i< s.size(); i++){
-     temp[i] = &s[i][0];
- }
-temp.push_back(NULL);
-return temp;
+    for(int i = 0; i< s.size(); i++){
+        temp[i] = &s[i][0];
+    }
+    temp.push_back(NULL);
+    return temp;
 }
 
 //call in and run external commands
-void runexe(){
+void runexe(vector<string> ch){
+    pid_t child;
+    child = fork();
+    vector<char *> carconv;
 
-pid_t child;
-child = fork();
+    if ( child < 0 ){
+        cout<<" Forking Error"<<endl;
+    }
+    else if(child == 0){
+        carconv = convertS(ch);
+        char **cmd = &carconv[0];
 
+        if( execvp(cmd[0], cmd) ==-1){
+            quit();
+        }
+    }
+    else{
+        wait(NULL);
 
-
-}
+    }
+}// end of runexe()
 
 
 
@@ -184,11 +196,10 @@ child = fork();
 
 
 void pipe(){
-   /*
+
     int pfileDes[2];
     pid_t pid1;
     pid_t pid2;
-*/
 
 
 }//end of pipe
@@ -196,7 +207,7 @@ void pipe(){
 //https://youtu.be/5fnVr-zH-SE
 void redirection(char *flag, string fileName){
     //printf("%s flag ", flag);
-   // printf("%s flag ", fileName);
+    // printf("%s flag ", fileName);
 
     if(strcmp(flag, ">")==0){
         int nstd= open(fileName.c_str(), O_WRONLY| O_CREAT, 0777);
@@ -205,7 +216,7 @@ void redirection(char *flag, string fileName){
         }
         if(dup2(nstd, STDOUT_FILENO)== -1){
             cout<<" dup2 fail."<<endl;
-            }
+        }
         close(nstd);
     }//end of if >
     else if(strcmp(flag, "<")==0){
@@ -216,7 +227,7 @@ void redirection(char *flag, string fileName){
         if(dup2(nstd, STDOUT_FILENO)== -1){
             cout<<" dup2 fail."<<endl;
         }
-          close(nstd);
+        close(nstd);
     }//end of if <
     else if(strcmp(flag, ">>")==0){
         int nstd= open(fileName.c_str(), O_WRONLY| O_CREAT|O_APPEND, 0777);
@@ -226,7 +237,7 @@ void redirection(char *flag, string fileName){
         if(dup2(nstd, STDOUT_FILENO)== -1){
             cout<<" dup2 fail."<<endl;
         }
-          close(nstd);
+        close(nstd);
 
     }
 }
@@ -241,10 +252,10 @@ void redirection(char *flag, string fileName){
 void changeDir(const char *dir){
     char i[100];
     if(dir == NULL){
-      printf("%s\n", getcwd(i, 100) );
+        printf("%s\n", getcwd(i, 100) );
     }
     else if(chdir(dir) < 0){
-    cerr<< "Directory not found."<< endl;
+        cerr<< "Directory not found."<< endl;
     }
     //printf("%s\n", getcwd(i, 100) );
 
@@ -278,13 +289,13 @@ void directory(string dirname){
 //This function is used to clear the screen
 //Using regex to clear the screen
 //https://www.geeksforgeeks.org/clear-console-c-language
-void clear(){
+void clear1(){
     int i;
     for(i = 0;i < 200; i++) {
         cout << "\n";
 
     }
-cout<<"Screen has been cleared"<< endl;
+    cout<<"Screen has been cleared"<< endl;
 }//end of clr
 
 
@@ -303,6 +314,7 @@ void environment(char *envp[]){
 
 }//end of environ
 
+//echo
 void echo(string string){
 
     cout<< string<< endl;
@@ -322,7 +334,6 @@ void help(){
 
 }//end of help
 
-
 //will pause shell until user hits enter
 void Pause(){
     cout << "\nPress Enter to Continue Program. ";
@@ -334,6 +345,5 @@ void Pause(){
 
 //will exit shell
 void quit(){
-    cout << "\nExiting myshell" << endl;
     exit(0);
 }//end of quit
