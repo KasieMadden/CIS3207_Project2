@@ -23,13 +23,16 @@ void Pause();
 void quit();
 vector<string> parse(string in);
 
+
+
 //**************************************************************************MAIN()
 
 int main(int argc, char *argv[],char *envp[]) {
-   char temp[100];
+    char temp[100];
     string user;
     vector<string> command;
     string input;
+    // command[0] = " ";
 
     while(true){
         //name of shell + cwd
@@ -39,25 +42,28 @@ int main(int argc, char *argv[],char *envp[]) {
         cout<<user;
         // user input
         getline(cin, input);
+        if(input == ""){
+            input = " ";
+        }
         command = parse(input);
 
         //call
-       if(command[0].compare("cd")==0){
-           changeDir(command[1].c_str());
-           command.clear();
-       }
-       else if(command[0].compare("dir") ==0){
-           directory(command[1].c_str());
-           command.clear();
-       }
+        if(command[0].compare("cd")==0){
+            changeDir(command[1].c_str());
+            command.clear();
+        }
+        else if(command[0].compare("dir") ==0){
+            directory(command[1].c_str());
+            command.clear();
+        }
         else if(command[0].compare("clr") ==0){
             clear();
             command.clear();
-       }
+        }
         else if(command[0].compare("environ") ==0){
             environment(envp);
             command.clear();
-       }
+        }
         else if(command[0].compare("echo") ==0){
             string t;
             for(int i = 1; i < command.size(); i++){
@@ -65,33 +71,33 @@ int main(int argc, char *argv[],char *envp[]) {
             }
             echo(t);
             command.clear();
-       }
+        }
         else if(command[0].compare("help") ==0){
             help();
             command.clear();
-       }
+        }
         else if(command[0].compare("pause") ==0){
             Pause();
             command.clear();
-       }
+        }
         else if(command[0].compare("quit") ==0){
             quit();
             command.clear();
-       }
+        }
 
     }//end of while()
 
 
 
 
-   // directory(".");
-   //changeDir("..");
-   // Pause();
+    // directory(".");
+    //changeDir("..");
+    // Pause();
     //clear();
-   // environment(envp);
-   // echo("hi hello how are you ");
+    // environment(envp);
+    // echo("hi hello how are you ");
     //help();
-   // quit();
+    // quit();
 
 
 
@@ -108,8 +114,8 @@ vector<string>parse(string ss){
         token.push_back(inter);
     }
 
-   // for (int i = 0; i < token.size(); i++){
-   // cout << token[i-1] << '\n';
+    // for (int i = 0; i < token.size(); i++){
+    // cout << token[i-1] << '\n';
     //command}
 
     return token;
@@ -123,15 +129,7 @@ void pipe(){
 //link to code valut that  helps understand refirection
 //https://youtu.be/5fnVr-zH-SE
 void redirection(string input){
-/**    pid =fork(input);
 
-
-
-
-    if(){
-
-    }
-**/
 
 
 }
@@ -156,10 +154,10 @@ void path(){
 void changeDir(const char *dir){
     char i[100];
     if(dir == NULL){
-      printf("%s\n", getcwd(i, 100) );
+        printf("%s\n", getcwd(i, 100) );
     }
     else if(chdir(dir) < 0){
-    cerr<< "Directory not found."<< endl;
+        cerr<< "Directory not found."<< endl;
     }
     //printf("%s\n", getcwd(i, 100) );
 
@@ -199,7 +197,7 @@ void clear(){
         cout << "\n";
 
     }
-cout<<"Screen has been cleared"<< '\n';
+    cout<<"Screen has been cleared"<< '\n';
 }//end of clr
 
 
@@ -210,6 +208,11 @@ void environment(char *envp[]){
     for(i=0; envp[i]!= NULL; i++){
         cout << envp[i] << endl;
     }
+    char temp[100];
+    string curdir = getcwd(temp, 100);
+
+    cout<<"shell=" << curdir << "/myshell"<<endl;
+
 
 }//end of environ
 
