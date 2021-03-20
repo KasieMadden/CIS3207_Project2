@@ -14,7 +14,7 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-
+bool gchild = false;
 //*********************************************************PROTOTYPES
 void directory(string dirname);
 void changeDir(const char *dir);
@@ -28,6 +28,8 @@ vector<string> parse(string in);
 void redirection(char *flag, string fileName);
 vector<char *> convertS( vector<string> s);
 void runexe(vector<string> ch);
+
+int pipeR();
 //*************************************************************MAIN()
 
 int main(int argc, char *argv[],char *envp[]) {
@@ -35,11 +37,12 @@ int main(int argc, char *argv[],char *envp[]) {
     string user;
     vector<string> command;
     string input;
-    int in1 = dup(fileno(stdin));
-    int out1 = dup(fileno(stdout) );
+    int in1 = dup(STDIN_FILENO);
+    int out1 = dup(STDOUT_FILENO );
 
 
     while(true){
+
         //name of shell + cwd
         cout << "myshell:~";
         user = (string)getcwd(temp, 1000);
@@ -50,6 +53,7 @@ int main(int argc, char *argv[],char *envp[]) {
         if(input == ""){
             input = " ";
         }
+        dup2(out1, STDOUT_FILENO);
         command = parse(input);
 
 
@@ -92,12 +96,19 @@ int main(int argc, char *argv[],char *envp[]) {
             command.clear();
         }
         else{
+            /**
+             for(int i = 0; i < command.size(); i++){
+                 cout<< command[i] << endl;
+             }**/
             runexe(command);
-            command.clear();
+            //command.clear();
         }
 
-        dup2(out1, 1);
-        dup2(in1, 0);
+
+        dup2(in1, STDIN_FILENO);
+        if( gchild){
+            quit();
+        }
 
     }//end of while()
 
@@ -115,8 +126,11 @@ int main(int argc, char *argv[],char *envp[]) {
 
 }// end of main**********************************************
 
+void errorMes(){
+    char error_mess[30] = "An error has occurred\n";
 
-
+    write(STDERR_FILENO,error_mess, strlen(error_mess));
+}
 
 //parser to pass the string though
 //https://www.geeksforgeeks.org/tokenizing-a-string-cpp/
@@ -139,20 +153,46 @@ vector<string>parse(string ss){
 
             redirection(a, file);
         }
-            /**  else if( inter.compare("&")==0){
-                 // call & handler
-              }
-              else if( inter.compare("|")==0){
-                 // call  for piping
-              }**/
+        else if( inter.compare("&")==0){
+            // call & handler
+        }
+        else if(inter.compare("|")==0){
+            int fileDes[2];
+            pid_t pid;
+
+
+            if(pipe(fileDes)== -1){
+                cout<< "error"<<endl;
+            }
+            pid = fork();
+            if(pid < 0){
+                cout<<" error." << endl;
+            }
+            if(pid ==0){
+                cout<<"this is a child"<<endl;
+                for(int i = 0; i <token.size(); i++ ){
+                    cout << token[i] <<endl;
+                }
+                dup2(fileDes[1], STDOUT_FILENO);
+                close(fileDes[0]);
+                close(fileDes[1]);
+                gchild = true;
+                return token;
+            }
+            wait(NULL);
+            token.clear();
+            dup2(fileDes[0], STDIN_FILENO);
+            close(fileDes[0]);
+            close(fileDes[1]);
+
+        }
         else{
             token.push_back(inter);
         }
 
-    }
+    }//end of while
     return token;
 }//end of parse
-
 
 
 //https://stackoverflow.com/questions/42493101/how-to-convert-a-vectorstring-to-a-vectorchar#comment72126556_42493563
@@ -179,30 +219,43 @@ void runexe(vector<string> ch){
     else if(child == 0){
         carconv = convertS(ch);
         char **cmd = &carconv[0];
-
-        if( execvp(cmd[0], cmd) ==-1){
+        if(execvp(cmd[0], cmd) ==-1){
             quit();
         }
     }
     else{
         wait(NULL);
-
     }
 }// end of runexe()
 
+/**
+int pipeR(){
+
+    int fileDes[2];
+    pid_t pid;
+
+    if((pid= fork())< 0){
+        cout<<" error." << endl;
+    }
+    else if((pid=fork())==0){
+        dup2(fileDes[0], STDOUT_FILENO);
+        close(fileDes[0]);
+        close(fileDes[1]);
+        gchild = false;
+        return token;
+    }
+    else{
+        wait(NULL);
+
+        dup2(fileDes[0], STDIN_FILENO);
+        close(fileDes[0]);
+        close(fileDes[1]);
+
+    }
 
 
 
-
-
-void pipe(){
-
-    int pfileDes[2];
-    pid_t pid1;
-    pid_t pid2;
-
-
-}//end of pipe
+}//end of pipe**/
 
 //https://youtu.be/5fnVr-zH-SE
 void redirection(char *flag, string fileName){
