@@ -9,10 +9,14 @@
 #include <vector>
 #include <regex>
 #include <string>
+#include <fcntl.h>
+#include <sys/wait.h>
 #include <bits/stdc++.h>
 
 using namespace std;
 
+
+//******************************************************PROTOTYPES
 void directory(string dirname);
 void changeDir(const char *dir);
 void clear();
@@ -22,17 +26,20 @@ void help();
 void Pause();
 void quit();
 vector<string> parse(string in);
+void redirection(char *flag, string fileName);
 
 
 
-//**************************************************************************MAIN()
+//*****************************************************MAIN()
 
 int main(int argc, char *argv[],char *envp[]) {
     char temp[100];
     string user;
     vector<string> command;
     string input;
-    // command[0] = " ";
+    int in1 = dup(fileno(stdin));
+    int out1 = dup(fileno(stdout) );
+
 
     while(true){
         //name of shell + cwd
@@ -46,6 +53,7 @@ int main(int argc, char *argv[],char *envp[]) {
             input = " ";
         }
         command = parse(input);
+
 
         //call
         if(command[0].compare("cd")==0){
@@ -85,6 +93,10 @@ int main(int argc, char *argv[],char *envp[]) {
             command.clear();
         }
 
+        dup2(out1, 1);
+        dup2(in1, 0);
+
+
     }//end of while()
 
 
@@ -101,7 +113,10 @@ int main(int argc, char *argv[],char *envp[]) {
 
 
 
-}// end of myshell()*******************************************************
+}// end of main********************************************************
+
+
+
 
 //parser to pass the string though
 //https://www.geeksforgeeks.org/tokenizing-a-string-cpp/
@@ -109,41 +124,96 @@ vector<string>parse(string ss){
     vector <string> token;
     stringstream check1(ss);
     string inter;
+    char a[1];
+    string file;
+
 
     while(getline(check1, inter, ' ')){
-        token.push_back(inter);
+        if(inter.compare("<") == 0||inter.compare(">")==0 ||inter.compare(">>")==0){
+
+            strcpy(a, inter.c_str());
+            printf("%s a", a);
+
+            getline(check1, file, ' ');
+            printf("%s file", file);
+
+            redirection(a, file);
+        }
+            /**  else if( inter.compare("&")==0){
+                 // call & handler
+              }
+              else if( inter.compare("|")==0){
+                 // call  for piping
+              }**/
+        else{
+            token.push_back(inter);
+        }
+
     }
-
-    // for (int i = 0; i < token.size(); i++){
-    // cout << token[i-1] << '\n';
-    //command}
-
     return token;
 }//end of parse
 
 
-void pipe(){
+
+
+
+
+void cover(){
 
 }
 
-//link to code valut that  helps understand refirection
+
+void pipe(char **){
+
+    int pfileDes[2];
+    pid_t pid1;
+    pid_t pid2;
+
+
+
+}//end of pipe
+
 //https://youtu.be/5fnVr-zH-SE
-void redirection(string input){
+void redirection(char *flag, string fileName){
+    printf("%s flag ", flag);
+    printf("%s flag ", fileName);
 
+    if(strcmp(flag, ">")==0){
+        int nstd= open(fileName.c_str(), O_WRONLY| O_CREAT, 0777);
+        if(nstd < 0){
+            cout<<" can't open file."<<endl;
+        }
+        if(dup2(nstd, STDOUT_FILENO)== -1){
+            cout<<" dup2 fail."<<endl;
+        }
+        close(nstd);
+    }//end of if >
+    else if(strcmp(flag, "<")==0){
+        int nstd= open(fileName.c_str(), O_RDONLY, 0777);
+        if(nstd < 0){
+            cout<<" can't open file."<<endl;
+        }
+        if(dup2(nstd, STDOUT_FILENO)== -1){
+            cout<<" dup2 fail."<<endl;
+        }
+        close(nstd);
+    }//end of if <
+    else if(strcmp(flag, ">>")==0){
+        int nstd= open(fileName.c_str(), O_WRONLY| O_CREAT|O_CREAT, 0777);
+        if(nstd < 0){
+            cout<<" can't open file."<<endl;
+        }
+        if(dup2(nstd, STDOUT_FILENO)== -1){
+            cout<<" dup2 fail."<<endl;
+        }
+        close(nstd);
 
-
+    }
 }
 
 
-void external(){
 
-}
-
-
-//***********INTERNAL COMMANDS
-void path(){
-
-}
+//**************************************************INTERNAL COMMANDS
 
 //This functio will change  directories
 // only takes in one arg, any thing else will be error
@@ -211,7 +281,7 @@ void environment(char *envp[]){
     char temp[100];
     string curdir = getcwd(temp, 100);
 
-    cout<<"shell=" << curdir << "/myshell"<<endl;
+    cout<<"shell="<<curdir<< "/myshell"<<endl;
 
 
 }//end of environ
