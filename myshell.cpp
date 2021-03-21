@@ -218,7 +218,7 @@ vector<string>parse(string ss){
 vector<char *> convertS( vector<string> s){
     vector<char *> temp(s.size(), nullptr);
 
-    for(int i = 0; i< s.size(); i++){
+    for(unsigned  int i = 0; i< s.size(); i++){
         temp[i] = &s[i][0];
     }
     temp.push_back(NULL);
