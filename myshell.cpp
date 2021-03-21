@@ -370,7 +370,7 @@ void echo(string string){
 //https://www.w3schools.com/cpp/cpp_files.asp
 void help(){
     string helpText;
-    ifstream readFile("readme_doc.txt");
+    ifstream readFile("readme_doc");
 
     while(getline(readFile, helpText)){
         cout<<helpText<<endl;
