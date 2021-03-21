@@ -72,14 +72,6 @@ int main(int argc, char *argv[],char *envp[]) {
         }
 
 
-
-
-
-
-
-
-
-
         //call
         if(command[0].compare("cd")==0){
             changeDir(command[1].c_str());
