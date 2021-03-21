@@ -1,0 +1,6 @@
+dir . 
+echo testing hi how are you
+pause
+ls 
+cat help.txt
+quit 
