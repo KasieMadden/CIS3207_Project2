@@ -1,0 +1,46 @@
+Built-in Commands-- 
+
+cd --(change directory) is used to chage the current  working directory.
+
+clr -- is used to clear the screen.
+
+dir -- is used  to list the contents of the directory.
+
+environ -- is used to display all the enviroments variables.
+
+echo --  is used to output strings.
+
+help -- is used to provide more information on the commands and how the program is built.
+
+pause -- is used to momentarily pasue the shell and only continue when 'Enter' is pressed.
+
+quit -- is used to exit the shell completely 
+
+
+*************************************FLAGS************************************************
+I/O Redirection:
+
+> -- will redirect output for specified command file with in the current  directory
+        [command] > file.txt
+
+< -- will redirect for input to used 
+    [command] < file.txt
+
+>> -- will redirect output for  specified command file with in the current  directory
+      [command] >> file.txt 
+
+
+Piping:
+
+| --  Will allow pipp
+
+
+
+Background: 
+
+& -- will run a process in the background while the user continues using  myshell
+
+
+
+
+

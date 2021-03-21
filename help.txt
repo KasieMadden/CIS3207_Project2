@@ -1,0 +1,17 @@
+This is the help help file that will provide information ont the builtin commands
+
+
+cd <directory> - will change the directory. 
+
+Clr - will clear the termainal
+
+dir <directory> - will list the current directory
+
+environ - list all the environment string
+
+echo - displays the <comment> on the display followed by a new line. 
+
+pause - pause the shell
+
+quit - quit the shell
+
