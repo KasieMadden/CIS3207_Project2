@@ -49,6 +49,10 @@ int main(int argc, char *argv[],char *envp[]) {
 
 
     while(true){
+        //redirection
+        dup2(out1, STDOUT_FILENO);
+        command = parse(input);
+
         if(argc == 1){
             cout << "myshell:~";
             user = (string)getcwd(temp, 1000);
@@ -61,15 +65,15 @@ int main(int argc, char *argv[],char *envp[]) {
             }
         }// end of if argc1
 
+
+
         if(argc == 2){
             getline(readFile, input);
         }
 
 
 
-        //redirection
-        dup2(out1, STDOUT_FILENO);
-        command = parse(input);
+
 
 
 
