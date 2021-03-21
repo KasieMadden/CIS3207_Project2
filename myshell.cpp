@@ -164,6 +164,8 @@ vector<string>parse(string ss){
                 gchild = true;
             }
 
+            //clear the parent
+            //let read new line.
         }
 
 
