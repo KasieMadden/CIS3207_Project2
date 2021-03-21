@@ -20,27 +20,33 @@ quit -- is used to exit the shell completely
 *************************************FLAGS************************************************
 I/O Redirection:
 
-> -- will redirect output for specified command file with in the current  directory
-        [command] > file.txt
+> -- Using this flag will allow a redirection of a command to a specified output file. If the specified output already exists,
+    it will rewrite the contents of the file.
+        EXAMPLE: [command] > file.txt
 
-< -- will redirect for input to used 
-    [command] < file.txt
 
->> -- will redirect output for  specified command file with in the current  directory
-      [command] >> file.txt 
+< -- Using this flag will allow a redirection from a file to to be used an input command. As an example you can read in the
+     contents and print them to the screen.
+    EXAMPLE: [command] < file.txt
+
+>> -- Using this flag will allow a redirection of a command to an output file or append the specified file
+      if it already exists.
+      EXAMPLE: [command] >> file.txt
+
 
 
 Piping:
 
-| --  Will allow pipp
+| --  Using this flag will allow the user to be able link the output of the first command to the input of the next comamnd.
+      EXAMPLE: [command] | [command]
 
 
+Background:
 
-Background: 
+& -- Using this flag will run a process in the background while the user continues using the shell.
+    EXAMPLE: [command] &
 
-& -- will run a process in the background while the user continues using  myshell
-
-
-
-
-
+***********************************BATCHFILE*********************************
+Running the batch.txt file will allow the user to execute multiple commnds in the
+written order. To run this the user will add the file name to the end of the compile.
+EXAMPLE: ./myshell batch.txt
